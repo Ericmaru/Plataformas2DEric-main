@@ -1,3 +1,4 @@
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,9 +14,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _jumpForce = 7;
     private float jumpHeight = 2;
 
+    private bool _alreadyLanded = true;
+
     private InputAction _attackAction;
 
     private GroundSensor _groundSensor;
+
+    private Animator _animator;
+
+    private InputAction _interAction;
+
+    [SerializeField] private Vector2 _interactionZone = new Vector2(1, 1);
 
     [SerializeField] private Transform _sensorPosition;
     [SerializeField] private Vector2 _sensorSize = new Vector2(0.5f, 0.5f);
@@ -23,9 +32,11 @@ public class PlayerController : MonoBehaviour
     {
         _rigidBody = GetComponent<Rigidbody2D>();
         _groundSensor = GetComponentInChildren<GroundSensor>();
+        _animator = GetComponent<Animator>();
         _moveAction = InputSystem.actions["Move"];
         _jumpAction = InputSystem.actions["Jump"];
         _attackAction = InputSystem.actions["Attack"];
+        _interAction = InputSystem.actions["Interact"];
     }
 
     void Start()
@@ -43,12 +54,33 @@ public class PlayerController : MonoBehaviour
         {
             Jump();
         }
+
+        Movement();
+
+        _animator.SetBool("IsJumping", !isGrounded());
     }
+
+    void Interact()
+    {
+        //Debug.Log("haciendo cosas");
+        Collider2D[] interactables = Physics2D.OverlapBoxAll(transmform.position, _interactionZone, 0);
+        foreach (Collider2D item in interactables)
+        {
+            {
+                if (item.gameObject.tag == "Star")
+                {
+                    return true;
+                }
+            }
+        }
+    }
+
 
     void Jump()
     {
         Debug.Log("salto");
         _rigidBody.AddForce(transform.up * Mathf.Sqrt(jumpHeight * -2 * Physics2D.gravity.y), ForceMode2D.Impulse);
+        
 
     }
 
@@ -75,5 +107,23 @@ public class PlayerController : MonoBehaviour
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(_sensorPosition.position, _sensorSize);
+    }
+
+    void Movement()
+    {
+        if (_moveInput.x < 0)
+        {
+            transform.rotation = Quaternion.Euler(0, 180, 0);
+            _animator.SetBool("IsMoving", true);
+        }
+        else if (_moveInput.x > 0)
+        {
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            _animator.SetBool("IsMoving", true);
+        }
+        else
+        {
+            _animator.SetBool("IsMoving", false);
+        }
     }
 }
