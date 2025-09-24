@@ -1,9 +1,11 @@
-using System.Numerics;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    int vida = 50;
+
     private Rigidbody2D _rigidBody;
 
     private InputAction _moveAction;
@@ -63,15 +65,20 @@ public class PlayerController : MonoBehaviour
     void Interact()
     {
         //Debug.Log("haciendo cosas");
-        Collider2D[] interactables = Physics2D.OverlapBoxAll(transmform.position, _interactionZone, 0);
+        Collider2D[] interactables = Physics2D.OverlapBoxAll(transform.position, _interactionZone, 0);
         foreach (Collider2D item in interactables)
         {
+            
+            if (item.gameObject.tag == "Star")
             {
-                if (item.gameObject.tag == "Star")
+                Star starScript = item.gameObject.GetComponent<Star>();
+            
+                if (starScript != null)
                 {
-                    return true;
+                    starScript.Interaction();
                 }
             }
+        
         }
     }
 
@@ -107,6 +114,9 @@ public class PlayerController : MonoBehaviour
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(_sensorPosition.position, _sensorSize);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(transform.position, _interactionZone);
     }
 
     void Movement()
