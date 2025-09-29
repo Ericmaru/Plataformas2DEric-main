@@ -1010,6 +1010,45 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "PauseMap",
+            "id": "df77fd3e-d02e-4a14-baec-149d787b101f",
+            "actions": [
+                {
+                    "name": "pause",
+                    "type": "Button",
+                    "id": "0b26540d-f53d-4e23-9c4a-2d683f47e832",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b70d4416-d379-4eb0-8b25-916e163ecb66",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1f3c07d4-9c96-466c-9909-c29ff08c289c",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

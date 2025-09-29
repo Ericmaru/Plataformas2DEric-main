@@ -26,6 +26,9 @@ public class PlayerController : MonoBehaviour
 
     private InputAction _interAction;
 
+    [SerializeField] private int _maxHealth = 10;
+    [SerializeField] private int _currentHealth;
+
     [SerializeField] private Vector2 _interactionZone = new Vector2(1, 1);
 
     [SerializeField] private Transform _sensorPosition;
@@ -43,7 +46,17 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        _currentHealth = _maxHealth;
+    }
 
+    void TakeDamage(int damage)
+    {
+        _currentHealth -= damage;
+        
+        if (_currentHealth <= 0)
+        {
+            Death();
+        }
     }
 
     void Update()
@@ -68,17 +81,17 @@ public class PlayerController : MonoBehaviour
         Collider2D[] interactables = Physics2D.OverlapBoxAll(transform.position, _interactionZone, 0);
         foreach (Collider2D item in interactables)
         {
-            
+
             if (item.gameObject.tag == "Star")
             {
                 Star starScript = item.gameObject.GetComponent<Star>();
-            
+
                 if (starScript != null)
                 {
                     starScript.Interaction();
                 }
             }
-        
+
         }
     }
 
@@ -87,7 +100,7 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("salto");
         _rigidBody.AddForce(transform.up * Mathf.Sqrt(jumpHeight * -2 * Physics2D.gravity.y), ForceMode2D.Impulse);
-        
+
 
     }
 
@@ -136,4 +149,11 @@ public class PlayerController : MonoBehaviour
             _animator.SetBool("IsMoving", false);
         }
     }
+
+    void Death()
+    {
+        Destroy(gameObject);
+    }
+
+
 }
