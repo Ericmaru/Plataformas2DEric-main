@@ -13,7 +13,7 @@ public class Star : MonoBehaviour
     {
         //_gameManager.AddStar();
         GameManager.instance.AddStar();
-        AudioManager.instance.ReproduceSound(_starsfx);
+        SoundManager.Instance.ReproduceSound(_starsfx);
         Debug.Log("Adios");
         Destroy(gameObject);
     }
