@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,11 +5,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance { get; private set; }
 
-    private bool _isPaused = false;
+    public bool _isPaused = false;
 
     [SerializeField] private GameObject _pauseCanvas;
 
-    [SerializeField] private InputActionAsset playerInputs;
+    public InputActionAsset playerInputs;
 
     private InputAction _pauseInput;
 
@@ -58,16 +57,17 @@ public class GameManager : MonoBehaviour
         {
             _isPaused = false;
             Time.timeScale = 1;
-            _pauseCanvas.SetActive(false);
+            GuiManager.Instance.ChangeCanvasStatus(GuiManager.Instance._pauseCanvas, false);
             playerInputs.FindActionMap("Player").Enable();
         }
         else
         {
             _isPaused = true;
             Time.timeScale = 0;
-            _pauseCanvas.SetActive(true);
-            playerInputs.FindActionMap("Player").Disable();   
+            GuiManager.Instance.ChangeCanvasStatus(GuiManager.Instance._pauseCanvas, true);
+            playerInputs.FindActionMap("Player").Disable();
         }
     }
+
 
 }

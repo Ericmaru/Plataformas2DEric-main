@@ -26,8 +26,8 @@ public class PlayerController : MonoBehaviour
 
     private InputAction _interAction;
 
-    [SerializeField] private int _maxHealth = 10;
-    [SerializeField] private int _currentHealth;
+    [SerializeField] private float _maxHealth = 10;
+    [SerializeField] private float _currentHealth;
 
     [SerializeField] private Vector2 _interactionZone = new Vector2(1, 1);
 
@@ -52,6 +52,11 @@ public class PlayerController : MonoBehaviour
     void TakeDamage(int damage)
     {
         _currentHealth -= damage;
+
+        float health = _currentHealth / _maxHealth;
+        Debug.Log(health);
+
+        GuiManager.Instance.UpdateHealthBar(_currentHealth, _maxHealth);
         
         if (_currentHealth <= 0)
         {
@@ -73,21 +78,26 @@ public class PlayerController : MonoBehaviour
         Movement();
 
         _animator.SetBool("IsJumping", !isGrounded());
+
+        if (_interAction.WasPerformedThisFrame())
+        {
+            Interact();
+        }
     }
 
     void Interact()
     {
-        //Debug.Log("haciendo cosas");
         Collider2D[] interactables = Physics2D.OverlapBoxAll(transform.position, _interactionZone, 0);
         foreach (Collider2D item in interactables)
         {
 
-            if (item.gameObject.tag == "Star")
+            if (item.gameObject.tag == "stars")
             {
                 Star starScript = item.gameObject.GetComponent<Star>();
 
                 if (starScript != null)
                 {
+                    Debug.Log("haciendo cosas");
                     starScript.Interaction();
                 }
             }
