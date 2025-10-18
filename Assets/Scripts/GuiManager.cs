@@ -5,8 +5,15 @@ public class GuiManager : MonoBehaviour
 {
     public static GuiManager Instance;
     public GameObject _pauseCanvas;
+    public GameObject _winCanvas;
 
     private Image _healthBar;
+
+    [SerializeField] private Text _coinText;
+    [SerializeField] private Text _starText;
+    [SerializeField] private int _coin;
+    [SerializeField] private int _star;
+
 
     void Awake()
     {
@@ -22,7 +29,7 @@ public class GuiManager : MonoBehaviour
 
     public void ChangeCanvasStatus(GameObject canvas, bool status)
     {
-        _pauseCanvas.SetActive(status);
+        canvas.SetActive(status);
     }
 
     // Update is called once per frame
@@ -41,5 +48,20 @@ public class GuiManager : MonoBehaviour
         SceneLoad.Instance.ChangeScene(sceneName);
     }
 
+    public void UpdateStars()
+    {
+        _star ++;
+        _starText.text = "Stars: 0" + _star.ToString();
 
+        if(_star >= 3)
+        {
+            ChangeCanvasStatus(_winCanvas, true);
+        }
+    }
+
+    public void UpdateCoins()
+    {
+        _coin ++;
+        _coinText.text = "Coins: 0" + _coin.ToString();
+    }
 }

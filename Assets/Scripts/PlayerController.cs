@@ -1,6 +1,11 @@
-
+using System.Collections;
+using System.Xml;
+using JetBrains.Annotations;
+using Unity.VisualScripting;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,6 +22,9 @@ public class PlayerController : MonoBehaviour
     private float jumpHeight = 2;
 
     private bool _alreadyLanded = true;
+    private bool _canAttack = true;
+    private float _attackColdown = 0.5f;
+
 
     private InputAction _attackAction;
 
@@ -28,11 +36,18 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float _maxHealth = 10;
     [SerializeField] private float _currentHealth;
+    public float _attackRange = 1;
+    public Transform _attackPosition;
+    public float _attackDamage = 10;
+    [SerializeField] private LayerMask _enemyLayer;
+
 
     [SerializeField] private Vector2 _interactionZone = new Vector2(1, 1);
 
     [SerializeField] private Transform _sensorPosition;
     [SerializeField] private Vector2 _sensorSize = new Vector2(0.5f, 0.5f);
+    [SerializeField] private bool _isRunning = false;
+    
     void Awake()
     {
         _rigidBody = GetComponent<Rigidbody2D>();
@@ -49,7 +64,7 @@ public class PlayerController : MonoBehaviour
         _currentHealth = _maxHealth;
     }
 
-    void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         _currentHealth -= damage;
 
@@ -82,6 +97,24 @@ public class PlayerController : MonoBehaviour
         if (_interAction.WasPerformedThisFrame())
         {
             Interact();
+        }
+
+        if(_attackAction.WasPressedThisFrame() && !_isRunning)
+        {
+            if(_canAttack)
+            {
+                _animator.SetTrigger("Attack");
+                StartCoroutine(AttackColdown());
+            }
+        }
+
+        else if(_attackAction.WasPressedThisFrame() && _isRunning)
+        {
+            if(_canAttack)
+            {
+                _animator.SetTrigger("MovingAttack");
+                StartCoroutine(AttackColdown());
+            }
         }
     }
 
@@ -140,6 +173,9 @@ public class PlayerController : MonoBehaviour
 
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(transform.position, _interactionZone);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(_attackPosition.position, _attackRange);
     }
 
     void Movement()
@@ -165,5 +201,24 @@ public class PlayerController : MonoBehaviour
         Destroy(gameObject);
     }
 
+    void Attack()
+    {
+        Collider2D[] Enemy = Physics2D.OverlapCircleAll(_attackPosition.position, _attackRange, _enemyLayer);
+        foreach (Collider2D item in Enemy)
+        {
+            if(item.gameObject.layer == 6)
+            {
+                EnemyScript _enemyScript = item.gameObject.GetComponent<EnemyScript>();
+                _enemyScript.TakeDamage(_attackDamage);
+            }
+        }
+    }
+
+    IEnumerator AttackColdown()
+    {
+        _canAttack = false;
+        yield return new WaitForSeconds(_attackColdown);
+        _canAttack = true;
+    }
 
 }
