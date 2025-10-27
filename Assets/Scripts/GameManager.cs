@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-
+        SoundManager.Instance.ChangeBGM(SoundManager.Instance.gameBGM);
     }
 
     void Update()

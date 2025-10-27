@@ -22,6 +22,11 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    void Start()
+    {
+        
+    }
+
     public void ReproduceSound(AudioClip clip)
     {
         _sfxSource.PlayOneShot(clip);
